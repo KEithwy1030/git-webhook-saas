@@ -8,7 +8,7 @@ Created on 2016-10-20
 from app.wraps.login_wrap import login_required
 from app import app
 from app.utils import ResponseUtil, RequestUtil, StringUtil, JsonUtil, AuthUtil
-from app.database.model import WebHook, Server, History
+from app.database.model import WebHook, Server, History, User
 from app.tasks import tasks
 
 
@@ -31,6 +31,16 @@ def api_webhook_new():
     # login user
     user_id = RequestUtil.get_login_user().get('id', '')
     server_id = RequestUtil.get_parameter('server_id', '')
+    
+    # SaaS Free Tier Limit (Max 3 Webhooks)
+    webhook_id = RequestUtil.get_parameter('id', '')
+    if not webhook_id:
+        user = User.query.get(user_id)
+        if user and not user.is_premium:
+            count = WebHook.query.filter_by(user_id=user_id, deleted=False).count()
+            if count >= 3:
+                return ResponseUtil.standard_response(0, 'Free plan limit reached! You can only create up to 3 WebHooks. Please upgrade to Premium.')
+
     # server must be added by yourself
     if not Server.query.filter_by(id=server_id, user_id=user_id).first():
         return ResponseUtil.standard_response(0, 'Permission deny!')

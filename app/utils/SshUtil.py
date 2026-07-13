@@ -5,7 +5,7 @@ Created on 2016-8-2
 @author: hustcc
 '''
 import paramiko
-import StringIO
+from io import StringIO
 
 
 def is_log_success(log):
@@ -28,7 +28,7 @@ def do_ssh_cmd(ip, port, account, pkey, shell, push_data='', timeout=300):
 
     try:
         # 首先以 ssh 密钥方式登陆
-        pkey_file = StringIO.StringIO(pkey.strip() + '\n')  # 注意最后有一个换行
+        pkey_file = StringIO(pkey.strip() + '\n')  # 注意最后有一个换行
         private_key = paramiko.RSAKey.from_private_key(pkey_file)
         s.connect(ip, port, account, pkey=private_key, timeout=5)
         pkey_file.close()

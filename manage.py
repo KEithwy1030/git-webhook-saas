@@ -7,164 +7,56 @@ Created on 2016-11-23
 
 import subprocess
 import sys
-from flask_script import Manager, Command, Server as _Server, Option
-from app import SQLAlchemyDB as db, socketio, app, __version__
 import os
-# import shutil
+from app import SQLAlchemyDB as db, app, __version__
 
-
-manager = Manager(app)
-
-
-class Server(_Server):
-    help = description = 'Runs the Git-WebHook web server'
-
-    def get_options(self):
-        options = (
-            Option('-h', '--host',
-                   dest='host',
-                   default='0.0.0.0'),
-            Option('-p', '--port',
-                   dest='port',
-                   type=int,
-                   default=18340),
-            Option('-d', '--debug',
-                   action='store_true',
-                   dest='use_debugger',
-                   help=('enable the Werkzeug debugger (DO NOT use in '
-                         'production code)'),
-                   default=self.use_debugger),
-            Option('-D', '--no-debug',
-                   action='store_false',
-                   dest='use_debugger',
-                   help='disable the Werkzeug debugger',
-                   default=self.use_debugger),
-            Option('-r', '--reload',
-                   action='store_true',
-                   dest='use_reloader',
-                   help=('monitor Python files for changes (not 100%% safe '
-                         'for production use)'),
-                   default=self.use_reloader),
-            Option('-R', '--no-reload',
-                   action='store_false',
-                   dest='use_reloader',
-                   help='do not monitor Python files for changes',
-                   default=self.use_reloader),
-        )
-        return options
-
-    def __call__(self, app, host, port, use_debugger, use_reloader):
-        # override the default runserver command to start a Socket.IO server
-        if use_debugger is None:
-            use_debugger = app.debug
-            if use_debugger is None:
-                use_debugger = True
-        if use_reloader is None:
-            use_reloader = app.debug
-        import eventlet
-        # monkey_patch
-        eventlet.monkey_patch()
-
-        socketio.run(app,
-                     host=host,
-                     port=port,
-                     debug=use_debugger,
-                     use_reloader=use_reloader,
-                     **self.server_options)
-
-
-manager.add_command("runserver", Server())
-
-
-class CeleryWorker(Command):
-    """Starts the celery worker."""
-    name = 'celery'
-    capture_all_args = True
-
-    def run(self, argv):
-        cmd = ['celery', '-A', 'app.celeryInstance', 'worker'] + argv
-        ret = subprocess.call(cmd)
-        sys.exit(ret)
-
-
-manager.add_command("celery", CeleryWorker())
-
-
-CONFIG_TEMP = """# -*- coding: utf-8 -*-
-'''
-Created on 2016-10-20
-
-@author: hustcc
-'''
-
-# for sqlite
-DATABASE_URI = 'sqlite:///git_webhook.db'
-# for mysql
-# DATABASE_URI = 'mysql+pymysql://dev:dev@127.0.0.1/git_webhook'
-
-CELERY_BROKER_URL = 'redis://:redis_pwd@127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://:redis_pwd@127.0.0.1:6379/0'
-
-SOCKET_MESSAGE_QUEUE = 'redis://:redis_pwd@127.0.0.1:6379/0'
-
-GITHUB_CLIENT_ID = 'b6e751cc48d664240467'
-GITHUB_CLIENT_SECRET = '6a9e0cbeee1bf89a1e1a25958f35b9dc6b36c996'
-"""
-
-
-class Config(Command):
-    """Generates new configuration file into user Home dir."""
-    name = 'config'
-    capture_all_args = True
-
-    def run(self, argv):
-        dir = os.path.join(os.path.expanduser('~'), '.git-webhook')
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        if os.path.isdir(dir):
-            path = os.path.join(dir, 'git_webhook_config.py')
-            if os.path.exists(path):
-                print('Fail: the configuration file exist in `%s`.' % path)
-            else:
-                # shutil.copy('app/config_example.py', path)
-                with open(path, 'w') as f:
-                    f.write(CONFIG_TEMP)
-                print('OK: init configuration file into `%s`.' % path)
-        else:
-            print('Fail: %s should be directory.' % dir)
-
-
-manager.add_command("config", Config())
-
-
-@manager.command
-def createdb(drop_first=False):
-    """Creates the database."""
-    if drop_first:
-        db.drop_all()
-    db.create_all()
-    print('OK: database is initialed.')
-
-
-@manager.command
-def lint():
-    """Runs code linter."""
-    lint = subprocess.call(['flake8']) == 0
-    if lint:
-        print('OK')
-    sys.exit(lint)
-
-
-@manager.command
-def version():
-    "Shows the version"
-    print __version__
-
-
-# script entry
-def run():
-    manager.run()
-
+# Expose app for gunicorn (manage:app)
+app = app
 
 if __name__ == '__main__':
-    manager.run()
+    args = sys.argv[1:]
+    if not args:
+        print("Usage: python manage.py [createdb|celery|version]")
+        sys.exit(1)
+    
+    cmd = args[0]
+    if cmd == 'createdb':
+        # Drop first option if passed
+        drop_first = '--drop' in args or 'drop_first' in args
+        with app.app_context():
+            if drop_first:
+                db.drop_all()
+            db.create_all()
+        print('OK: database is initialed.')
+    elif cmd == 'celery':
+        # Replicate Celery worker startup command
+        # e.g., celery --loglevel=info --logfile=/data/celery.log --pidfile=/run/celery.pid --detach -P eventlet
+        celery_args = args[1:]
+        # Remove --detach option if celery >= 5.0.0 because it was removed in celery v5.0
+        # Instead, celery v5 uses db/redis background management or systemd/supervisord.
+        # But to be safe, let's keep compatibility by stripping --detach if it causes issues, 
+        # or we just run the celery worker command directly.
+        # In python 3 / Celery 5, --detach is deprecated. We can handle it or pass it.
+        # Celery 5.0+ removed the --detach option. We should filter it out.
+        filtered_args = []
+        detach_mode = False
+        for arg in celery_args:
+            if arg == '--detach':
+                detach_mode = True
+            else:
+                filtered_args.append(arg)
+        
+        # Build celery command: celery -A app.celeryInstance worker ...
+        run_cmd = ['celery', '-A', 'app.celeryInstance', 'worker'] + filtered_args
+        if detach_mode:
+            # If detach is requested, we can use subprocess.Popen instead of blocking call
+            print("Running Celery worker in background (detached)...")
+            subprocess.Popen(run_cmd)
+        else:
+            ret = subprocess.call(run_cmd)
+            sys.exit(ret)
+    elif cmd == 'version':
+        print(__version__)
+    else:
+        print("Unknown command: %s" % cmd)
+        sys.exit(1)

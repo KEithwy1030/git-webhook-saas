@@ -19,6 +19,7 @@ class User(db.Model, BaseMethod):
 
     src = db.Column(db.String(4), default="gh")  # useless
     last_login = db.Column(db.DateTime, default=datetime.datetime.now)
+    is_premium = db.Column(db.Boolean, default=False)
 
     def dict(self):
         rst = {}
@@ -28,6 +29,7 @@ class User(db.Model, BaseMethod):
         rst['avatar'] = self.avatar
         rst['src'] = self.src
         rst['last_login'] = self.last_login
+        rst['is_premium'] = self.is_premium
         return rst
 
 

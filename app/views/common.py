@@ -65,3 +65,19 @@ def github_authorized(oauth_token):
 def logout():
     RequestUtil.logout()
     return redirect(url_for('index'))
+
+
+from app.wraps.login_wrap import login_required
+
+@app.route('/api/user/upgrade_demo', methods=['POST'])
+@login_required()
+def api_user_upgrade_demo():
+    user_id = RequestUtil.get_login_user().get('id', '')
+    user = User.query.get(user_id)
+    if user:
+        user.is_premium = True
+        user.save()
+        # Update session cache
+        RequestUtil.login_user(user.dict())
+        return ResponseUtil.standard_response(1, 'Upgrade Success')
+    return ResponseUtil.standard_response(0, 'User not found')

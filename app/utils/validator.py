@@ -34,6 +34,8 @@ See https://validators.readthedocs.io/en/latest for detail abort validators
 import sys
 import functools
 import collections
+import collections.abc
+collections.Mapping = collections.abc.Mapping
 import validators
 from schema import Schema, SchemaError, And, Use, Optional, Regex
 from flask import make_response, request, abort

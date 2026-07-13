@@ -7,7 +7,7 @@ Created on 2016-10-20
 from app.wraps.login_wrap import login_required
 from app import app, v
 from app.utils import ResponseUtil, RequestUtil, SshUtil
-from app.database.model import Server
+from app.database.model import Server, User
 
 
 # get server list
@@ -40,6 +40,14 @@ def api_server_new(ip, port, account, pkey, name=None, id=None):
     user_id = RequestUtil.get_login_user().get('id', '')
     server_id = id
     name = name if name else ip
+
+    # SaaS Free Tier Limit (Max 1 Server)
+    if not server_id:
+        user = User.query.get(user_id)
+        if user and not user.is_premium:
+            count = Server.query.filter_by(user_id=user_id, deleted=False).count()
+            if count >= 1:
+                return ResponseUtil.standard_response(0, 'Free plan limit reached! You can only add up to 1 Server. Please upgrade to Premium.')
 
     try:
         success, log = SshUtil.do_ssh_cmd(

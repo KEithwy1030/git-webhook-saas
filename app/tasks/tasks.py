@@ -5,8 +5,8 @@ Created on 2016-10-20
 @author: hustcc
 '''
 import sys
-reload(sys)  # noqa
-sys.setdefaultencoding('utf8')
+# reload(sys)  # noqa
+# sys.setdefaultencoding('utf8')
 
 import datetime  # noqa
 from app import celeryInstance  # noqa
@@ -48,7 +48,7 @@ def do_webhook_shell(webhook_id, history_id, data, user_id=None):
 
     # ProgrammingError: You must not use 8-bit bytestrings unless you use a
     # text_factory
-    log = unicode(log)  # noqa
+    log = str(log)  # noqa
 
     history.shell_log = log
     history.updateStatus(status)
