@@ -81,3 +81,20 @@ def api_user_upgrade_demo():
         RequestUtil.login_user(user.dict())
         return ResponseUtil.standard_response(1, 'Upgrade Success')
     return ResponseUtil.standard_response(0, 'User not found')
+
+
+@app.route('/login_demo', methods=['GET'])
+def login_demo():
+    user_id = 'DemoUser'
+    user = User.query.get(user_id)
+    if user is None:
+        user = User(
+            id=user_id,
+            name="Demo Developer",
+            avatar="https://github.com/identicons/demo.png",
+            location="SaaS Cloud",
+            is_premium=False
+        )
+        user.save()
+    RequestUtil.login_user(user.dict())
+    return redirect(url_for('index'))

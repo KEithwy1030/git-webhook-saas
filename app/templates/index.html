@@ -13,6 +13,12 @@
   <link rel="bookmark" href="/static/res/img/logo.png"/>
 </head>
 <body>
+    <div id="saas-demo-banner" style="background: linear-gradient(90deg, #FFE000 0%, #799F0C 100%); color: black; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 10002; display: none;">
+       📢 SaaS MVP Preview Mode: 
+       <a href="/login_demo" style="color: black; text-decoration: underline; margin-left: 15px; background: white; padding: 4px 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 0.9em; font-family: sans-serif;">
+         One-Click Demo Access (免登体验通道)
+       </a>
+    </div>
 	<div id="wrapper">
 		
 	</div>
@@ -34,6 +40,12 @@
   
   <script type="text/javascript">
     $(document).ready(function() {
+      // Check login status to display SaaS demo banner
+      if (!window.loginUser || !window.loginUser.id) {
+        $('#saas-demo-banner').show();
+        $('body').css('padding-top', '50px');
+      }
+
       if (window.loginUser && window.loginUser.id) {
         var isPremium = window.loginUser.is_premium;
         
