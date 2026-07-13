@@ -46,3 +46,43 @@ def api_history_list():
     }
 
     return ResponseUtil.standard_response(1, data)
+
+
+from app.utils import SshUtil, JsonUtil
+from app.tasks import tasks
+
+@app.route('/api/history/autofix', methods=['POST'])
+@login_required()
+def api_history_autofix():
+    user_id = RequestUtil.get_login_user().get('id', '')
+    history_id = RequestUtil.get_parameter('history_id', '')
+    
+    history = History.query.get(history_id)
+    if not history:
+        return ResponseUtil.standard_response(0, 'History not found')
+        
+    webhook = history.webhook
+    if not webhook or webhook.user_id != user_id:
+        return ResponseUtil.standard_response(0, 'Permission deny')
+        
+    if not history.ai_fix_suggestion:
+        return ResponseUtil.standard_response(0, 'No AI fix suggestion available')
+        
+    server = webhook.server
+    if not server:
+        return ResponseUtil.standard_response(0, 'Server not found')
+        
+    try:
+        # Run AI Auto-Fix command on remote server via SSH
+        success, log = SshUtil.do_ssh_cmd(
+            server.ip, server.port, server.account, server.pkey, 
+            history.ai_fix_suggestion, timeout=60
+        )
+        if not success:
+            return ResponseUtil.standard_response(0, 'AI Auto-Fix execution failed: ' + str(log))
+            
+        # Re-trigger the original Webhook deployment
+        tasks.do_task.delay(webhook.id, JsonUtil.json_2_object(history.data), user_id)
+        return ResponseUtil.standard_response(1, 'AI Auto-Fix applied successfully! Triggering redeployment...')
+    except Exception as e:
+        return ResponseUtil.standard_response(0, 'Server connection error during AI Auto-Fix: ' + str(e))

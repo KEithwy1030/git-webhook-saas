@@ -117,6 +117,8 @@ class History(db.Model, BaseMethod):
     # 1:waiting, 2:ing, 3:error, 4:success, 5:except, other
     status = db.Column(db.String(1))
     shell_log = db.Column(db.Text)  # hook shell log
+    ai_analysis = db.Column(db.Text)  # AI root cause analysis
+    ai_fix_suggestion = db.Column(db.Text)  # AI one-click bash fix suggestion
 
     data = db.Column(db.Text)  # git push data
     push_user = db.Column(db.String(64))  # git push user(name<email>)
@@ -132,6 +134,8 @@ class History(db.Model, BaseMethod):
         rst['id'] = self.id
         rst['status'] = self.status
         rst['shell_log'] = self.shell_log
+        rst['ai_analysis'] = self.ai_analysis
+        rst['ai_fix_suggestion'] = self.ai_fix_suggestion
         rst['data'] = self.data  # json
         rst['push_user'] = self.push_user
         rst['add_time'] = self.add_time

@@ -12,6 +12,7 @@ import datetime  # noqa
 from app import celeryInstance  # noqa
 from app.database.model import History, WebHook  # noqa
 from app.utils import SshUtil, JsonUtil, HookDataParse  # noqa
+from app.utils.AiUtil import analyze_error_log
 
 
 # webhook / data all is JSON dict.
@@ -51,6 +52,15 @@ def do_webhook_shell(webhook_id, history_id, data, user_id=None):
     log = str(log)  # noqa
 
     history.shell_log = log
-    history.updateStatus(status)
 
+    # AI Root Cause Analysis for failures
+    if not success:
+        ai_res = analyze_error_log(log)
+        history.ai_analysis = ai_res['analysis']
+        history.ai_fix_suggestion = ai_res['fix_suggestion']
+    else:
+        history.ai_analysis = None
+        history.ai_fix_suggestion = None
+
+    history.updateStatus(status)
     webhook.updateStatus(status)

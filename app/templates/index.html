@@ -106,6 +106,66 @@
             }
           });
         });
+
+        // 1. Hook global ajax responses to capture history list details
+        $(document).ajaxComplete(function(event, xhr, settings) {
+          if (settings.url.indexOf('/api/history/list') !== -1) {
+            try {
+              var response = JSON.parse(xhr.responseText);
+              if (response.success === 1 && response.data.histories) {
+                window.lastHistories = response.data.histories;
+              }
+            } catch(e) {}
+          }
+        });
+
+        // 2. Poll to detect visible log modal and inject AI Diagnostic Card
+        setInterval(function() {
+          var modal = $('.ui.modal:visible');
+          if (modal.length > 0 && $('#ai-diagnostic-card').length === 0) {
+            var logText = modal.find('pre, code, .content').text();
+            if (logText && window.lastHistories) {
+              for (var i = 0; i < window.lastHistories.length; i++) {
+                var h = window.lastHistories[i];
+                if (h.shell_log && logText.indexOf(h.shell_log.substring(0, 50)) !== -1) {
+                  if ((h.status === '3' || h.status === '5') && h.ai_analysis) {
+                    var cardHtml = 
+                      '<div class="ui segment" id="ai-diagnostic-card" style="border: 1px solid #FFE000 !important; background: #FFFDF0; margin-top: 15px; text-align: left; width: 100%;">' +
+                      '  <h4 class="ui header" style="color: #d09c00; margin-top: 0;"><i class="robot icon"></i> 🤖 AI Diagnostic Report</h4>' +
+                      '  <p style="color: #333; font-weight: 500;">' + h.ai_analysis + '</p>' +
+                      (h.ai_fix_suggestion ? 
+                      '  <div style="background: #272822; color: #f8f8f2; padding: 12px; border-radius: 4px; font-family: monospace; margin: 10px 0; font-size: 0.9em; white-space: pre-wrap;">' + h.ai_fix_suggestion + '</div>' +
+                      '  <button class="ui green button" id="apply-ai-fix-btn" data-history-id="' + h.id + '"><i class="lightning icon"></i> Apply AI Auto-Fix</button>' : '') +
+                      '</div>';
+                    
+                    modal.find('.content').append(cardHtml);
+                    // Refresh modal layout to accommodate the newly added card
+                    try { modal.modal('refresh'); } catch(e) {}
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }, 500);
+
+        // 3. Bind Apply AI Auto-Fix button handler
+        $(document).on('click', '#apply-ai-fix-btn', function() {
+          var btn = $(this);
+          var historyId = btn.data('history-id');
+          btn.addClass('loading');
+          
+          $.post('/api/history/autofix', { history_id: historyId }, function(res) {
+            btn.removeClass('loading');
+            if (res.code === 1) {
+              alert('AI Auto-Fix applied successfully! Triggering redeployment...');
+              $('.ui.modal').modal('hide');
+              location.reload();
+            } else {
+              alert('AI Auto-Fix failed: ' + res.message);
+            }
+          });
+        });
       }
     });
   </script>
