@@ -588,8 +588,13 @@
       }
     };
 
-    // Default language is English
-    var currentLang = localStorage.getItem('git_webhook_lang') || 'en';
+    // Default language is English (with safe storage wrapper to prevent security crashes)
+    var currentLang = 'en';
+    try {
+      currentLang = localStorage.getItem('git_webhook_lang') || 'en';
+    } catch (e) {
+      currentLang = 'en';
+    }
 
     function applyTranslations(lang) {
       if (lang !== 'en' && lang !== 'zh') {
@@ -639,7 +644,9 @@
       // 2. Language Switcher listener
       $(document).on('click', '#lang-toggle-btn', function() {
         currentLang = (currentLang === 'en' ? 'zh' : 'en');
-        localStorage.setItem('git_webhook_lang', currentLang);
+        try {
+          localStorage.setItem('git_webhook_lang', currentLang);
+        } catch (e) {}
         applyTranslations(currentLang);
       });
 
