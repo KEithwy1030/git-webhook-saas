@@ -359,6 +359,32 @@
 	<div id="wrapper">
 		
 	</div>
+
+    <!-- High-fidelity landing page rendered outside React container to avoid SPA overrides -->
+    <div id="custom-landing-page" style="display: none;">
+      <div class="hero-container">
+        <h1 class="hero-title">🚀 GitAutoDeploy</h1>
+        <p class="hero-subtitle">Turn Git Push into zero-config live deployments. Let Gemini AI autonomously heal your build errors under 10 seconds.</p>
+        <div class="hero-grid">
+          <div class="hero-card">
+            <h3>⚡ One-Click GitOps</h3>
+            <p>自动识别 Node, Python, Docker 项目。一键绑定 GitHub 代码仓，全自动向云端执行热部署。</p>
+          </div>
+          <div class="hero-card">
+            <h3>🤖 AI Self-Healing</h3>
+            <p>全天候监听运行状态。编译或运行崩溃时，驱动 Gemini 3.5 AI 自动分析 Traceback 并瞬间修愈。</p>
+          </div>
+          <div class="hero-card">
+            <h3>🔒 Private AI Shield</h3>
+            <p>企业级高强数据隐私保护。高级会员可绑定私有 AI 端点，确保您的核心代码日志绝不泄露。</p>
+          </div>
+        </div>
+        <div class="hero-buttons">
+          <a href="/login" class="ui big button" style="background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important; color: white !important; padding: 16px 36px !important; box-shadow: 0 8px 24px rgba(94, 106, 210, 0.3) !important;"><i class="github icon"></i> Login with GitHub</a>
+          <a href="/login_demo" class="ui big basic button" style="padding: 16px 36px !important;"><i class="play icon"></i> One-Click Demo Access</a>
+        </div>
+      </div>
+    </div>
 	
   <script type="text/javascript">
     // global var
@@ -382,40 +408,9 @@
         $('#saas-demo-banner').show();
         $('body').css('padding-top', '50px');
 
-        // Overwrite raw empty skeleton with high-fidelity commercial SaaS Landing Page
-        $('#wrapper').html(
-          '<div class="hero-container">' +
-          '  <h1 class="hero-title">🚀 GitAutoDeploy</h1>' +
-          '  <p class="hero-subtitle">Turn Git Push into zero-config live deployments. Let Gemini AI autonomously heal your build errors under 10 seconds.</p>' +
-          '  <div class="hero-grid">' +
-          '    <div class="hero-card">' +
-          '      <h3>⚡ One-Click GitOps</h3>' +
-          '      <p>自动识别 Node, Python, Docker 项目。一键绑定 GitHub 代码仓，全自动向云端执行热部署。</p>' +
-          '    </div>' +
-          '    <div class="hero-card">' +
-          '      <h3>🤖 AI Self-Healing</h3>' +
-          '      <p>全天候监听运行状态。编译或运行崩溃时，驱动 Gemini 3.5 AI 自动分析 Traceback 并瞬间修愈。</p>' +
-          '    </div>' +
-          '    <div class="hero-card">' +
-          '      <h3>🔒 Private AI Shield</h3>' +
-          '      <p>企业级高强数据隐私保护。高级会员可绑定私有 AI 端点，确保您的核心代码日志绝不泄露。</p>' +
-          '    </div>' +
-          '  </div>' +
-          '  <div class="hero-buttons">' +
-          '    <a href="/login" class="ui big button" style="background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important; color: white !important; padding: 16px 36px !important; box-shadow: 0 8px 24px rgba(94, 106, 210, 0.3) !important;"><i class="github icon"></i> Login with GitHub</a>' +
-          '    <a href="/login_demo" class="ui big basic button" style="padding: 16px 36px !important;"><i class="play icon"></i> One-Click Demo Access</a>' +
-          '  </div>' +
-          '</div>'
-        );
-
-        // Hide blank navigation menus for unregistered users to ensure professional display
-        var checkMenuExistUnauth = setInterval(function() {
-          var menu = $('.ui.menu');
-          if (menu.length > 0) {
-            clearInterval(checkMenuExistUnauth);
-            menu.find('a.item, .item:not(.right)').hide();
-          }
-        }, 50);
+        // Hide raw React container and display our premium custom landing page
+        $('#wrapper').hide();
+        $('#custom-landing-page').show();
       }
 
       if (window.loginUser && window.loginUser.id) {
