@@ -489,35 +489,47 @@
 	</div>
 
     <!-- High-fidelity commercial landing page rendered outside React container to avoid SPA overrides -->
-    <div id="custom-landing-page" style="display: none; max-width: 960px; margin: 0 auto; padding: 120px 24px 60px 24px; text-align: center;">
+    <div id="custom-landing-page" style="display: none; max-width: 960px; margin: 0 auto; padding: 120px 24px 60px 24px; text-align: center; position: relative;">
+      
+      <!-- Premium Glassmorphic Language Switcher -->
+      <div id="language-switcher" style="position: absolute; top: -10px; right: 24px; z-index: 10005;">
+        <button class="ui mini basic button" id="lang-toggle-btn" style="background: rgba(255,255,255,0.03) !important; border: 1px solid var(--color-hairline) !important; color: var(--color-ink-muted) !important; padding: 8px 16px !important; border-radius: 6px !important; font-size: 0.85em !important; font-family: 'Inter', sans-serif !important; cursor: pointer; transition: all 0.2s ease;">
+          🌐 English / 中文
+        </button>
+      </div>
+
       <h1 class="hero-title" style="font-family: 'Outfit', sans-serif !important; font-size: 3.6rem !important; font-weight: 800 !important; letter-spacing: -2.0px !important; background: linear-gradient(135deg, #ffffff 0%, #a2adff 100%) !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; margin-bottom: 24px !important; line-height: 1.15 !important;">
         🚀 GitAutoDeploy
-        <span style="font-size: 0.45em; color: var(--color-ink-subtle); display: block; margin-top: 10px; font-weight: 500; letter-spacing: 0; -webkit-text-fill-color: var(--color-ink-subtle) !important;">
+        <span id="i18n-subtitle" style="font-size: 0.45em; color: var(--color-ink-subtle); display: block; margin-top: 10px; font-weight: 500; letter-spacing: 0; -webkit-text-fill-color: var(--color-ink-subtle) !important;">
           AI-Powered Self-Healing Continuous Deployment SaaS
         </span>
       </h1>
       
-      <h2 class="hero-subtitle" style="font-family: 'Inter', sans-serif !important; font-size: 1.3rem !important; color: var(--color-ink-muted) !important; max-width: 680px !important; line-height: 1.65 !important; font-weight: 400 !important; letter-spacing: -0.2px !important; margin: 0 auto 40px auto !important;">
-        Turn <strong style="color: #ffffff; font-weight: 700;">Git Push</strong> into <span style="color: #828fff; font-weight: 600;">zero-config</span> live deployments. Let <span style="background: linear-gradient(135deg, #00f5ff 0%, #00e5ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;">Gemini 3.5 AI</span> autonomously heal your build errors <span style="color: #ff9f00; font-weight: 600;">under 10 seconds</span>.
+      <h2 id="i18n-desc" class="hero-subtitle" style="font-family: 'Inter', sans-serif !important; font-size: 1.3rem !important; color: var(--color-ink-muted) !important; max-width: 680px !important; line-height: 1.65 !important; font-weight: 400 !important; letter-spacing: -0.2px !important; margin: 0 auto 40px auto !important;">
+        <!-- Filled by JS -->
       </h2>
       
       <div class="hero-buttons" style="margin-bottom: 60px !important;">
-        <a href="/login" class="ui huge primary button" style="text-decoration: none !important; background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important; color: white !important; box-shadow: 0 8px 24px rgba(94, 106, 210, 0.3) !important;"><i class="github icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sign in with GitHub</a>
-        <a href="/login_demo" class="ui huge basic button" style="margin-left: 16px !important; text-decoration: none !important;"><i class="play icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sandbox Demo</a>
+        <a href="/login" id="i18n-signin-btn" class="ui huge primary button" style="text-decoration: none !important; background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important; color: white !important; box-shadow: 0 8px 24px rgba(94, 106, 210, 0.3) !important;">
+          <!-- Filled by JS -->
+        </a>
+        <a href="/login_demo" id="i18n-sandbox-btn" class="ui huge basic button" style="margin-left: 16px !important; text-decoration: none !important;">
+          <!-- Filled by JS -->
+        </a>
       </div>
 
       <div class="hero-grid" style="display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; text-align: left !important; width: 100% !important;">
         <div class="hero-card">
-          <h3>⚡ One-Click GitOps</h3>
-          <p>自动识别 Node, Python, Docker 项目。一键绑定 GitHub 代码仓，全自动向云端执行热部署。</p>
+          <h3 id="i18n-card1-title">⚡ One-Click GitOps</h3>
+          <p id="i18n-card1-desc"><!-- Filled by JS --></p>
         </div>
         <div class="hero-card">
-          <h3>🤖 AI Self-Healing</h3>
-          <p>全天候监听运行状态。编译或运行崩溃时，驱动 Gemini 3.5 AI 自动分析 Traceback 并瞬间修愈。</p>
+          <h3 id="i18n-card2-title">🤖 AI Self-Healing</h3>
+          <p id="i18n-card2-desc"><!-- Filled by JS --></p>
         </div>
         <div class="hero-card">
-          <h3>🔒 Private AI Shield</h3>
-          <p>企业级高强数据隐私保护。高级会员可绑定私有 AI 端点，确保您的核心代码日志绝不泄露。</p>
+          <h3 id="i18n-card3-title">🔒 Private AI Shield</h3>
+          <p id="i18n-card3-desc"><!-- Filled by JS --></p>
         </div>
       </div>
     </div>
@@ -538,58 +550,100 @@
   <script type="text/javascript" left="90%" bottom="20%" src="/static/res/js/x-return-top.min.js"></script>
   
   <script type="text/javascript">
+    // Global Translation Packages
+    var i18n = {
+      en: {
+        subtitle: 'AI-Powered Self-Healing Continuous Deployment SaaS',
+        desc: 'Turn <strong style="color: #ffffff; font-weight: 700;">Git Push</strong> into <span style="color: #828fff; font-weight: 600;">zero-config</span> live deployments. Let <span style="background: linear-gradient(135deg, #00f5ff 0%, #00e5ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;">Gemini 3.5 AI</span> autonomously heal your build errors <span style="color: #ff9f00; font-weight: 600;">under 10 seconds</span>.',
+        signIn: '<i class="github icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sign in with GitHub',
+        sandbox: '<i class="play icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sandbox Demo',
+        banner: '📢 SaaS MVP Preview Mode: One-Click Demo Access (Powered by 🤖 AI Auto-Fill & Diagnostics) ',
+        bannerLink: 'One-Click Demo Access',
+        card1Title: '⚡ One-Click GitOps',
+        card1Desc: 'Supports Node, Python, Docker. Bind GitHub repository with one click to trigger automatic hot-deployments.',
+        card2Title: '🤖 AI Self-Healing',
+        card2Desc: '24/7 runtime monitoring. Drives Gemini AI to analyze traceback errors and auto-repair deployments.',
+        card3Title: '🔒 Private AI Shield',
+        card3Desc: 'Enterprise-grade privacy shield. Bind custom AI endpoints to isolate codebase and execution logs.',
+        premiumMember: '<i class="crown icon"></i> Premium Member',
+        upgradePremium: '<i class="crown icon"></i> Upgrade to Premium',
+        langBtnText: '🌐 English / 中文'
+      },
+      zh: {
+        subtitle: 'AI 驱动自愈式持续部署 SaaS 平台',
+        desc: '将 <strong style="color: #ffffff; font-weight: 700;">Git Push</strong> 转化为 <span style="color: #828fff; font-weight: 600;">零配置</span> 的实时部署。驱动 <span style="background: linear-gradient(135deg, #00f5ff 0%, #00e5ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;">Gemini 3.5 AI</span> 在 <span style="color: #ff9f00; font-weight: 600;">10秒内</span> 自动定位并修愈编译/运行错误。',
+        signIn: '<i class="github icon" style="display:inline-block !important; margin-right: 8px !important;"></i> GitHub 账号登录',
+        sandbox: '<i class="play icon" style="display:inline-block !important; margin-right: 8px !important;"></i> 免登沙箱体验',
+        banner: '📢 SaaS MVP 预览模式：一键免登体验通道 (集成 🤖 AI 智能诊断及自愈演示) ',
+        bannerLink: '一键免登体验',
+        card1Title: '⚡ 一键式 GitOps',
+        card1Desc: '自动识别 Node, Python, Docker 项目。一键绑定 GitHub 代码仓，全自动向云端执行热部署。',
+        card2Title: '🤖 AI 自愈引擎',
+        card2Desc: '全天候监听运行状态。编译或运行崩溃时，驱动 Gemini 3.5 AI 自动分析 Traceback 并瞬间修愈。',
+        card3Title: '🔒 私有 AI 隔离盾',
+        card3Desc: '企业级高强数据隐私保护。高级会员可绑定私有 AI 端点，确保您的核心代码日志绝不泄露。',
+        premiumMember: '<i class="crown icon"></i> 尊享会员',
+        upgradePremium: '<i class="crown icon"></i> 升级至高级会员',
+        langBtnText: '🌐 中文 / English'
+      }
+    };
+
+    // Default language is English
+    var currentLang = localStorage.getItem('git_webhook_lang') || 'en';
+
+    function applyTranslations(lang) {
+      var dict = i18n[lang];
+      
+      // Overwrite SaaS top banner
+      $('#saas-demo-banner').html(
+        dict.banner + 
+        '<a href="/login_demo" style="color: black; text-decoration: underline; margin-left: 15px; background: white; padding: 4px 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 0.9em; font-family: sans-serif;">' + 
+        dict.bannerLink + 
+        '</a>'
+      );
+
+      // Overwrite Landing Page contents
+      $('#i18n-subtitle').html(dict.subtitle);
+      $('#i18n-desc').html(dict.desc);
+      $('#i18n-signin-btn').html(dict.signIn);
+      $('#i18n-sandbox-btn').html(dict.sandbox);
+      
+      $('#i18n-card1-title').html(dict.card1Title);
+      $('#i18n-card1-desc').html(dict.card1Desc);
+      $('#i18n-card2-title').html(dict.card2Title);
+      $('#i18n-card2-desc').html(dict.card2Desc);
+      $('#i18n-card3-title').html(dict.card3Title);
+      $('#i18n-card3-desc').html(dict.card3Desc);
+
+      // Update button text
+      $('#lang-toggle-btn').text(dict.langBtnText);
+
+      // Update top menu elements if logged-in
+      if (window.loginUser && window.loginUser.id) {
+        var isPremium = window.loginUser.is_premium;
+        if (isPremium) {
+          $('#premium-badge-container .ui.label').html(dict.premiumMember);
+        } else {
+          $('#upgrade-premium-btn').html(dict.upgradePremium);
+        }
+      }
+    }
+
     $(document).ready(function() {
+      // 1. Initial translation application
+      applyTranslations(currentLang);
+
+      // 2. Language Switcher listener
+      $(document).on('click', '#lang-toggle-btn', function() {
+        currentLang = (currentLang === 'en' ? 'zh' : 'en');
+        localStorage.setItem('git_webhook_lang', currentLang);
+        applyTranslations(currentLang);
+      });
+
       // Check login status to display SaaS demo banner
       if (!window.loginUser || !window.loginUser.id) {
         $('#saas-demo-banner').show();
         $('body').css('padding-top', '50px');
-
-        // Poll wait for React components to mount to avoid race conditions
-        var checkUnauthLayout = setInterval(function() {
-          var masthead = $('.ui.inverted.vertical.masthead');
-          if (masthead.length > 0) {
-            clearInterval(checkUnauthLayout);
-            
-            // 1. Overwrite raw title with neon-glow text
-            var h1 = masthead.find('h1.ui.inverted.header');
-            h1.html('🚀 GitAutoDeploy <span style="font-size: 0.45em; color: var(--color-ink-subtle); display: block; margin-top: 10px; font-weight: 500; letter-spacing: 0;">AI-Powered Self-Healing Continuous Deployment SaaS</span>');
-            
-            // 2. Overwrite raw subtitle emphasizing core keywords
-            var h2 = masthead.find('h2');
-            h2.html('Turn <strong style="color: #ffffff; font-weight: 700;">Git Push</strong> into <span style="color: #828fff; font-weight: 600;">zero-config</span> live deployments. Let <span style="background: linear-gradient(135deg, #00f5ff 0%, #00e5ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;">Gemini 3.5 AI</span> autonomously heal your build errors <span style="color: #ff9f00; font-weight: 600;">under 10 seconds</span>.');
-
-            // 3. Inject secondary demo path to form dual-channel CTA conversion
-            var btnContainer = masthead.find('a.ui.huge.primary.button').parent();
-            if (btnContainer.length > 0) {
-              btnContainer.html(
-                '<a href="/login" class="ui huge primary button" style="text-decoration: none !important;"><i class="github icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sign in with GitHub</a>' +
-                '<a href="/login_demo" class="ui huge basic button" style="margin-left: 16px !important; text-decoration: none !important;"><i class="play icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sandbox Demo</a>'
-              );
-            }
-
-            // 4. Inject 3 frosted features cards to solve empty flat space issues
-            var featuresHtml = 
-              '<div class="hero-grid" style="margin-top: 60px !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; text-align: left !important; width: 100% !important;">' +
-              '  <div class="hero-card">' +
-              '    <h3>⚡ One-Click GitOps</h3>' +
-              '    <p>自动识别 Node, Python, Docker 项目。一键绑定 GitHub 代码仓，全自动向云端执行热部署。</p>' +
-              '  </div>' +
-              '  <div class="hero-card">' +
-              '    <h3>🤖 AI Self-Healing</h3>' +
-              '    <p>全天候监听运行状态。编译或运行崩溃时，驱动 Gemini 3.5 AI 自动分析 Traceback 并瞬间修愈。</p>' +
-              '  </div>' +
-              '  <div class="hero-card">' +
-              '    <h3>🔒 Private AI Shield</h3>' +
-              '    <p>企业级高强数据隐私保护。高级会员可绑定私有 AI 端点，确保您的核心代码日志绝不泄露。</p>' +
-              '  </div>' +
-              '</div>';
-
-            var textContainer = masthead.find('.ui.text.container');
-            if (textContainer.find('.hero-grid').length === 0) {
-              textContainer.append(featuresHtml);
-            }
-          }
-        }, 30);
       }
 
       if (window.loginUser && window.loginUser.id) {
@@ -602,15 +656,20 @@
             clearInterval(checkMenuExist);
             
             var premiumHtml = '';
+            var dict = i18n[currentLang];
             if (isPremium) {
-              premiumHtml = '<div class="item"><span class="ui label" style="background: rgba(94, 106, 210, 0.15) !important; color: #828fff !important; border: 1px solid rgba(94, 106, 210, 0.4) !important;"><i class="crown icon"></i> Premium Member</span></div>';
+              premiumHtml = '<div class="item" id="premium-badge-container"><span class="ui label" style="background: rgba(94, 106, 210, 0.15) !important; color: #828fff !important; border: 1px solid rgba(94, 106, 210, 0.4) !important;">' + dict.premiumMember + '</span></div>';
             } else {
-              premiumHtml = '<div class="item"><button class="ui button" id="upgrade-premium-btn" style="background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important; color: white !important; border-radius: 8px !important; box-shadow: 0 4px 12px rgba(94, 106, 210, 0.25) !important;"><i class="crown icon"></i> Upgrade to Premium</button></div>';
+              premiumHtml = '<div class="item" id="premium-badge-container"><button class="ui button" id="upgrade-premium-btn" style="background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important; color: white !important; border-radius: 8px !important; box-shadow: 0 4px 12px rgba(94, 106, 210, 0.25) !important;">' + dict.upgradePremium + '</button></div>';
             }
+
+            // Prepend a beautiful navbar lang switcher button
+            var navbarLangHtml = '<div class="item"><button class="ui mini basic button" id="lang-toggle-btn" style="background: rgba(255,255,255,0.03) !important; border: 1px solid var(--color-hairline) !important; color: var(--color-ink-muted) !important; padding: 6px 12px !important; border-radius: 6px !important; font-size: 0.85em !important; font-family: \'Inter\', sans-serif !important; cursor: pointer; transition: all 0.2s ease;">' + dict.langBtnText + '</button></div>';
             
             var rightMenu = menu.find('.right.menu');
             if (rightMenu.length > 0) {
               rightMenu.prepend(premiumHtml);
+              rightMenu.prepend(navbarLangHtml);
             }
           }
         }, 100);
