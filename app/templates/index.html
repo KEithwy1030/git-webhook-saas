@@ -181,6 +181,76 @@
             }
           });
         });
+
+        // 4. Poll to detect visible New WebHook Form and inject AI One-Click Repo Import field
+        setInterval(function() {
+          var form = $('form.ui.form');
+          if (form.length > 0 && form.find('h3:contains("WebHook")').length > 0 && $('#ai-import-field').length === 0) {
+            var aiFieldHtml = 
+              '<div class="field" id="ai-import-field" style="background: #e0f2f1; padding: 15px; border-radius: 6px; border: 1px solid #009688; margin-bottom: 15px;">' +
+              '  <label style="color: #00796b !important; font-weight: bold;"><i class="robot icon"></i> 🤖 AI One-Click Repo Import (AI 一键自动填表)</label>' +
+              '  <div class="ui fluid search selection dropdown" id="ai-repos-dropdown" style="margin-top: 5px;">' +
+              '    <select id="ai-repos-select">' +
+              '      <option value="">Loading your GitHub repositories...</option>' +
+              '    </select>' +
+              '  </div>' +
+              '</div>';
+              
+            form.find('.three.fields').before(aiFieldHtml);
+            
+            $.get('/api/github/repos', function(res) {
+              var select = $('#ai-repos-select');
+              select.empty();
+              if (res.code === 1 && res.data.length > 0) {
+                select.append('<option value="">-- Choose Repository (选择项目) --</option>');
+                res.data.forEach(function(repo) {
+                  select.append('<option value="' + repo.name + '" data-clone-url="' + repo.clone_url + '" data-branch="' + repo.default_branch + '">' + repo.name + '</option>');
+                });
+              } else {
+                select.append('<option value="">Error: No repos found or not logged in via GitHub</option>');
+              }
+            });
+          }
+        }, 800);
+
+        // 5. Automate form fields filling and AI shell generation on repo selection
+        $(document).on('change', '#ai-repos-select', function() {
+          var selectedOpt = $(this).find('option:selected');
+          var repoName = selectedOpt.val();
+          var cloneUrl = selectedOpt.data('clone-url');
+          var branch = selectedOpt.data('branch');
+          
+          if (!repoName) return;
+          
+          var repoInput = $('form.ui.form input[placeholder*="Name"]');
+          var branchInput = $('form.ui.form input[placeholder*="Branch"]');
+          var shellTextarea = $('form.ui.form textarea');
+          
+          // Fill fields and dispatch HTML5 input event to sync React state
+          if (repoInput.length > 0) {
+            repoInput.val(repoName).trigger('input').trigger('change');
+            var event = new Event('input', { bubbles: true });
+            repoInput[0].dispatchEvent(event);
+          }
+          if (branchInput.length > 0) {
+            branchInput.val(branch || 'master').trigger('input').trigger('change');
+            var event = new Event('input', { bubbles: true });
+            branchInput[0].dispatchEvent(event);
+          }
+          
+          if (shellTextarea.length > 0) {
+            shellTextarea.val('# AI is analyzing repository structure and generating optimized deploy script...').trigger('input');
+            $.post('/api/github/detect_project', { repo_name: repoName }, function(res) {
+              if (res.code === 1) {
+                shellTextarea.val(res.data.shell_script).trigger('input').trigger('change');
+                var event = new Event('input', { bubbles: true });
+                shellTextarea[0].dispatchEvent(event);
+              } else {
+                shellTextarea.val('# AI failed to analyze. Please write deployment script manually.').trigger('input');
+              }
+            });
+          }
+        });
       }
     });
   </script>

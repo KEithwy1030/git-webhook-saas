@@ -168,3 +168,54 @@ def api_user_upgrade_paypal():
         return ResponseUtil.standard_response(1, 'Upgrade Success')
     else:
         return ResponseUtil.standard_response(0, f'PayPal Verification Failed: {msg}')
+
+
+@app.route('/api/github/repos', methods=['GET'])
+@login_required()
+def api_github_repos():
+    try:
+        repos_data = github.get('user/repos', params={'per_page': 100, 'sort': 'updated'})
+        repos = []
+        for repo in repos_data:
+            repos.append({
+                'name': repo.get('full_name'),
+                'clone_url': repo.get('clone_url'),
+                'default_branch': repo.get('default_branch', 'master')
+            })
+        return ResponseUtil.standard_response(1, repos)
+    except Exception as e:
+        return ResponseUtil.standard_response(0, 'Failed to fetch GitHub repos: ' + str(e))
+
+
+@app.route('/api/github/detect_project', methods=['POST'])
+@login_required()
+def api_github_detect_project():
+    repo_name = RequestUtil.get_parameter('repo_name', '')
+    if not repo_name:
+        return ResponseUtil.standard_response(0, 'Missing repo_name')
+        
+    try:
+        contents = github.get(f'repos/{repo_name}/contents')
+        files = [f.get('name', '') for f in contents]
+        
+        shell_script = "# AI Generated Deployment Shell\n"
+        project_type = "Generic"
+        
+        if 'docker-compose.yml' in files:
+            project_type = "Docker Compose"
+            shell_script += "docker compose pull\ndocker compose up -d --build\necho 'Deploy success!'\n"
+        elif 'package.json' in files:
+            project_type = "Node.js"
+            shell_script += "npm install --registry=https://registry.npmmirror.com\nnpm run build || true\npm run start -d || pm2 restart all || true\n"
+        elif 'requirements.txt' in files:
+            project_type = "Python"
+            shell_script += "pip install -r requirements.txt\npython manage.py db upgrade || true\nkill -9 $(lsof -t -i:8000) || true\nnohup gunicorn app:app -b 0.0.0.0:8000 --detach &\n"
+        else:
+            shell_script += "# Pull latest code\ngit pull\necho 'Deploy finished!'\n"
+            
+        return ResponseUtil.standard_response(1, {
+            'project_type': project_type,
+            'shell_script': shell_script
+        })
+    except Exception as e:
+        return ResponseUtil.standard_response(0, 'AI failed to analyze repo: ' + str(e))
