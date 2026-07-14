@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="/static/res/css/common.css" />
   <link rel="stylesheet" href="/static/res/css/prism.css" />
   <link rel="shortcut icon" href="/static/res/img/logo.png"/>
-  <link rel="bookmark" href="/static/res/img/logo.png"/>
+   <link rel="bookmark" href="/static/res/img/logo.png"/>
+   <script src="https://www.paypal.com/sdk/js?client-id=AYfhe3krOaVlJmuDlFdwsGz036zOQDtwlOImoHY48_DJQeUzF0z-aKdZixVlZVoDCLVr_UISowsU9uv3&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
 </head>
 <body>
     <div id="saas-demo-banner" style="background: linear-gradient(90deg, #FFE000 0%, #799F0C 100%); color: black; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 10002; display: none;">
@@ -83,28 +84,42 @@
               '    <div class="ui divider"></div>' +
               '    <h2 class="ui green header">$9.90 <small style="font-size: 0.6em; color: gray;">/ month</small></h2>' +
               '    <p>Get instant access to unlimited automation workflows and high-speed build queues.</p>' +
-              '    <div class="ui large yellow button" id="pay-demo-btn" style="margin-top: 1em; background: linear-gradient(135deg, #FFE000 0%, #799F0C 100%) !important; color: white !important;">Subscribe Now</div>' +
+              '    <div id="paypal-button-container" style="margin-top: 1.5em; max-width: 350px; margin-left: auto; margin-right: auto;"></div>' +
               '  </div>' +
               '</div>'
             );
           }
           $('#premium-modal').modal('show');
-        });
 
-        // Demo subscription button handler
-        $(document).on('click', '#pay-demo-btn', function() {
-          var btn = $(this);
-          btn.addClass('loading');
-          
-          $.post('/api/user/upgrade_demo', function(res) {
-            btn.removeClass('loading');
-            if (res.code === 1) {
-              alert('Demo payment processed successfully! AI upgraded your account.');
-              location.reload();
-            } else {
-              alert('Upgrade failed: ' + res.message);
-            }
-          });
+          // Initialize PayPal Smart Buttons (only once)
+          if (!window.paypalButtonsRendered) {
+            paypal.Buttons({
+                style: {
+                    shape: 'rect',
+                    color: 'gold',
+                    layout: 'vertical',
+                    label: 'subscribe'
+                },
+                createSubscription: function(data, actions) {
+                  return actions.subscription.create({
+                    plan_id: 'P-8UF10924WA311035LNJLBBUQ'
+                  });
+                },
+                onApprove: function(data, actions) {
+                  // Verify subscription ID and upgrade user account on backend
+                  $.post('/api/user/upgrade_paypal', { subscription_id: data.subscriptionID }, function(res) {
+                    if (res.code === 1) {
+                      alert('Subscription active! AI has upgraded your account to Premium.');
+                      $('#premium-modal').modal('hide');
+                      location.reload();
+                    } else {
+                      alert('Activation failed: ' + res.message);
+                    }
+                  });
+                }
+            }).render('#paypal-button-container');
+            window.paypalButtonsRendered = true;
+          }
         });
 
         // 1. Hook global ajax responses to capture history list details
