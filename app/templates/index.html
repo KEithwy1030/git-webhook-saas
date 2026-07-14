@@ -587,7 +587,16 @@
         card3Desc: 'Enterprise-grade privacy shield. Bind custom AI endpoints to isolate codebase and execution logs.',
         premiumMember: '<i class="crown icon"></i> Premium Member',
         upgradePremium: '<i class="crown icon"></i> Upgrade to Premium',
-        langBtnText: '🌐 English / 中文'
+        langBtnText: '🌐 English / 中文',
+        navHome: 'Home',
+        navWebhook: 'Webhooks',
+        navServer: 'Servers',
+        navDocs: 'Documentation',
+        addWebhook: 'Add New Webhook',
+        addServer: 'Add New Server',
+        footer: '© 2026 GitAutoDeploy. All Rights Reserved.',
+        docTitle1: '1. How GitAutoDeploy Works?',
+        docTitle2: '2. How to Generate SSH Private Key?'
       },
       zh: {
         subtitle: 'AI 驱动自愈式持续部署 SaaS 平台',
@@ -604,7 +613,16 @@
         card3Desc: '企业级高强数据隐私保护。高级会员可绑定私有 AI 端点，确保您的核心代码日志绝不泄露。',
         premiumMember: '<i class="crown icon"></i> 尊享会员',
         upgradePremium: '<i class="crown icon"></i> 升级至高级会员',
-        langBtnText: '🌐 中文 / English'
+        langBtnText: '🌐 中文 / English',
+        navHome: '首页',
+        navWebhook: '我的 Webhook',
+        navServer: '服务器管理',
+        navDocs: '文档中心',
+        addWebhook: '添加新的 Git WebHook',
+        addServer: '添加新的 Server',
+        footer: '© 2026 GitAutoDeploy ♥ 版权所有',
+        docTitle1: '1. Git-WebHook 的原理与使用？',
+        docTitle2: '2. SSH Private Key 怎么获得？'
       }
     };
 
@@ -654,7 +672,53 @@
         } else {
           $('#upgrade-premium-btn').html(dict.upgradePremium);
         }
+        
+        // Visual translations for dynamic React views
+        translateReactConsole(dict);
       }
+    }
+
+    function translateReactConsole(dict) {
+      // 1. Footer Credits Translation
+      $('body, #wrapper').find('*').each(function() {
+        var text = $(this).text().trim();
+        if ($(this).children().length === 0) { // Leaf text node only
+          if (text.indexOf('版权所有') > -1 || text.indexOf('Hustcc') > -1 || text.indexOf('© 2016') > -1) {
+            $(this).text(dict.footer);
+          }
+        }
+      });
+
+      // 2. Navigation items
+      $('.ui.menu a.item, .ui.menu .item').each(function() {
+        var text = $(this).text().trim();
+        if (text === 'Home' || text === '首页') $(this).text(dict.navHome);
+        if (text === 'Git WebHook' || text === 'Webhooks' || text === '我的 Webhook') $(this).text(dict.navWebhook);
+        if (text === 'Server' || text === 'Servers' || text === '服务器管理') $(this).text(dict.navServer);
+        if (text === 'Documents' || text === 'Documentation' || text === '文档中心') $(this).text(dict.navDocs);
+      });
+
+      // 3. CTA Buttons
+      $('.ui.button').each(function() {
+        var text = $(this).text().trim();
+        if (text === '添加新的 Git WebHook' || text === 'Add New Webhook') {
+          $(this).html('<i class="plus icon"></i> ' + dict.addWebhook);
+        }
+        if (text === '添加新的 Server' || text === 'Add New Server') {
+          $(this).html('<i class="plus icon"></i> ' + dict.addServer);
+        }
+      });
+
+      // 4. Documentation subjects
+      $('a.item, a, .item').each(function() {
+        var text = $(this).text().trim();
+        if (text.indexOf('Git-WebHook 的原理与使用') > -1 || text.indexOf('How GitAutoDeploy Works') > -1) {
+          $(this).text(dict.docTitle1);
+        }
+        if (text.indexOf('SSH Private Key 怎么获得') > -1 || text.indexOf('How to Generate SSH Private Key') > -1) {
+          $(this).text(dict.docTitle2);
+        }
+      });
     }
 
     $(document).ready(function() {
@@ -779,6 +843,21 @@
             window.paypalButtonsRendered = true;
           }
         });
+
+        // 3. Hash Change Listener for React i18n refreshes
+        $(window).on('hashchange', function() {
+          setTimeout(function() {
+            applyTranslations(currentLang);
+          }, 150);
+        });
+
+        // 4. Low-cost periodical polling validator to fight React state resets
+        setInterval(function() {
+          if (window.loginUser && window.loginUser.id) {
+            applyTranslations(currentLang);
+          }
+        }, 300);
+      }
 
         // 1. Hook global ajax responses to capture history list details
         $(document).ajaxComplete(function(event, xhr, settings) {
