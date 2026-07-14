@@ -1,5 +1,64 @@
 # -*- coding: utf-8 -*-
 import re
+import requests
+import json
+from app import app
+
+def call_gemini_api(log_text):
+    api_key = app.config.get('GEMINI_API_KEY', '')
+    if not api_key:
+        return None
+
+    # Use a verified model from Google's list API response
+    model_name = "gemini-2.5-flash-native-audio-latest"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    
+    prompt = (
+        "You are a DevOps expert assistant. Analyze the following stderr execution logs and output two JSON keys:\n"
+        "1. 'analysis': A short summary explaining what went wrong (MUST be written in Chinese).\n"
+        "2. 'fix_suggestion': A precise bash script (or empty if not applicable) to repair the issue.\n\n"
+        f"Logs:\n{log_text}\n\n"
+        "Return ONLY a raw JSON object. Do NOT wrap it in ```json markdown codeblocks."
+    )
+    
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "contents": [{
+            "parts": [{
+                "text": prompt
+            }]
+        }]
+    }
+    
+    try:
+        # Request Google's Gemini API server directly
+        res = requests.post(url, headers=headers, json=payload, timeout=12)
+        if res.status_code == 200:
+            res_data = res.json()
+            output_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            
+            output_text = output_text.strip()
+            # Clean up markdown wrapping if Gemini wraps the response
+            if output_text.startswith("```json"):
+                output_text = output_text[7:]
+            elif output_text.startswith("```"):
+                output_text = output_text[3:]
+            if output_text.endswith("```"):
+                output_text = output_text[:-3]
+            output_text = output_text.strip()
+            
+            parsed = json.loads(output_text)
+            return {
+                'analysis': parsed.get('analysis', ''),
+                'fix_suggestion': parsed.get('fix_suggestion', '')
+            }
+    except Exception as e:
+        print("[AI Diagnostic] Gemini request error, fallback to local regex:", e)
+    return None
+
 
 def analyze_error_log(log_text):
     """
@@ -11,6 +70,12 @@ def analyze_error_log(log_text):
             'fix_suggestion': ""
         }
         
+    # Attempt to query Gemini API first
+    gemini_result = call_gemini_api(log_text)
+    if gemini_result:
+        return gemini_result
+        
+    # Fallback to local regex rule-based engine
     log_text_str = str(log_text)
     analysis = "🚨 AI Diagnostic: Unknown build/deployment failure. Please check host OS logs or connection timeout."
     fix_suggestion = ""
