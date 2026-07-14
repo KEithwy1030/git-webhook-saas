@@ -461,9 +461,23 @@
     .ui.vertical.stripe.segment {
       display: none !important;
     }
+
+    /* CSS-driven login state layout switcher (strictly ignores React JS lifecycle hijacks) */
+    body:not(.logged-in) #wrapper {
+      display: none !important;
+    }
+    body:not(.logged-in) #custom-landing-page {
+      display: block !important;
+    }
+    body.logged-in #wrapper {
+      display: block !important;
+    }
+    body.logged-in #custom-landing-page {
+      display: none !important;
+    }
   </style>
 </head>
-<body>
+<body class="{% if loginUser and loginUser.id %}logged-in{% endif %}">
     <div id="saas-demo-banner" style="background: linear-gradient(90deg, #FFE000 0%, #799F0C 100%); color: black; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 10002; display: none;">
        📢 SaaS MVP Preview Mode: One-Click Demo Access (Powered by 🤖 AI Auto-Fill & Diagnostics) 
        <a href="/login_demo" style="color: black; text-decoration: underline; margin-left: 15px; background: white; padding: 4px 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 0.9em; font-family: sans-serif;">
@@ -473,6 +487,40 @@
 	<div id="wrapper">
 		
 	</div>
+
+    <!-- High-fidelity commercial landing page rendered outside React container to avoid SPA overrides -->
+    <div id="custom-landing-page" style="display: none; max-width: 960px; margin: 0 auto; padding: 120px 24px 60px 24px; text-align: center;">
+      <h1 class="hero-title" style="font-family: 'Outfit', sans-serif !important; font-size: 3.6rem !important; font-weight: 800 !important; letter-spacing: -2.0px !important; background: linear-gradient(135deg, #ffffff 0%, #a2adff 100%) !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; margin-bottom: 24px !important; line-height: 1.15 !important;">
+        🚀 GitAutoDeploy
+        <span style="font-size: 0.45em; color: var(--color-ink-subtle); display: block; margin-top: 10px; font-weight: 500; letter-spacing: 0; -webkit-text-fill-color: var(--color-ink-subtle) !important;">
+          AI-Powered Self-Healing Continuous Deployment SaaS
+        </span>
+      </h1>
+      
+      <h2 class="hero-subtitle" style="font-family: 'Inter', sans-serif !important; font-size: 1.3rem !important; color: var(--color-ink-muted) !important; max-width: 680px !important; line-height: 1.65 !important; font-weight: 400 !important; letter-spacing: -0.2px !important; margin: 0 auto 40px auto !important;">
+        Turn <strong style="color: #ffffff; font-weight: 700;">Git Push</strong> into <span style="color: #828fff; font-weight: 600;">zero-config</span> live deployments. Let <span style="background: linear-gradient(135deg, #00f5ff 0%, #00e5ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;">Gemini 3.5 AI</span> autonomously heal your build errors <span style="color: #ff9f00; font-weight: 600;">under 10 seconds</span>.
+      </h2>
+      
+      <div class="hero-buttons" style="margin-bottom: 60px !important;">
+        <a href="/login" class="ui huge primary button" style="text-decoration: none !important; background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important; color: white !important; box-shadow: 0 8px 24px rgba(94, 106, 210, 0.3) !important;"><i class="github icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sign in with GitHub</a>
+        <a href="/login_demo" class="ui huge basic button" style="margin-left: 16px !important; text-decoration: none !important;"><i class="play icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sandbox Demo</a>
+      </div>
+
+      <div class="hero-grid" style="display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; text-align: left !important; width: 100% !important;">
+        <div class="hero-card">
+          <h3>⚡ One-Click GitOps</h3>
+          <p>自动识别 Node, Python, Docker 项目。一键绑定 GitHub 代码仓，全自动向云端执行热部署。</p>
+        </div>
+        <div class="hero-card">
+          <h3>🤖 AI Self-Healing</h3>
+          <p>全天候监听运行状态。编译或运行崩溃时，驱动 Gemini 3.5 AI 自动分析 Traceback 并瞬间修愈。</p>
+        </div>
+        <div class="hero-card">
+          <h3>🔒 Private AI Shield</h3>
+          <p>企业级高强数据隐私保护。高级会员可绑定私有 AI 端点，确保您的核心代码日志绝不泄露。</p>
+        </div>
+      </div>
+    </div>
 	
   <script type="text/javascript">
     // global var
