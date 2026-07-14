@@ -592,7 +592,10 @@
     var currentLang = localStorage.getItem('git_webhook_lang') || 'en';
 
     function applyTranslations(lang) {
-      var dict = i18n[lang];
+      if (lang !== 'en' && lang !== 'zh') {
+        lang = 'en';
+      }
+      var dict = i18n[lang] || i18n['en'];
       
       // Overwrite SaaS top banner
       $('#saas-demo-banner').html(
