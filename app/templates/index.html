@@ -537,7 +537,7 @@
   <script type="text/javascript">
     // global var
     // the login USER
-    var loginUser = JSON.parse({{ loginUser | tojson | safe }});
+    window.loginUser = JSON.parse({{ loginUser | tojson | safe }});
     var __version__ = "{{ __version__ }}"
   </script>
   
