@@ -366,65 +366,72 @@
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
-      padding: 100px 0 60px 0 !important;
+      padding: 120px 0 60px 0 !important;
       position: relative !important;
     }
     
-    /* Override native React title text with high-end neon text */
-    .ui.inverted.vertical.masthead.center.aligned.segment h1.ui.inverted.header {
-      font-size: 0 !important; /* Hide original title text */
-      margin-bottom: 24px !important;
-      line-height: 1 !important;
+    /* Ensure perfect center alignment and grid proximity */
+    .ui.inverted.vertical.masthead.center.aligned.segment .ui.text.container {
+      text-align: center !important;
+      max-width: 850px !important;
+      margin: 0 auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
     }
-    .ui.inverted.vertical.masthead.center.aligned.segment h1.ui.inverted.header::after {
-      content: "🚀 GitAutoDeploy" !important;
+    
+    /* Refine main title font weight and spacing */
+    .ui.inverted.vertical.masthead.center.aligned.segment h1.ui.inverted.header {
       font-family: 'Outfit', sans-serif !important;
-      font-size: 3.8rem !important;
+      font-size: 3.6rem !important;
       font-weight: 800 !important;
-      letter-spacing: -2px !important;
+      letter-spacing: -2.0px !important;
       background: linear-gradient(135deg, #ffffff 0%, #a2adff 100%) !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
-      display: block !important;
+      margin-bottom: 24px !important;
+      line-height: 1.15 !important;
+      text-align: center !important;
     }
     
-    /* Override native subhead text */
+    /* Refine subtitle layout and tracking */
     .ui.inverted.vertical.masthead.center.aligned.segment h2 {
-      font-size: 0 !important; /* Hide original text */
-      margin-bottom: 40px !important;
-    }
-    .ui.inverted.vertical.masthead.center.aligned.segment h2::after {
-      content: "Turn Git Push into zero-config live deployments. Let Gemini AI autonomously heal your build errors under 10 seconds." !important;
       font-family: 'Inter', sans-serif !important;
-      font-size: 1.35rem !important;
+      font-size: 1.3rem !important;
       color: var(--color-ink-muted) !important;
       max-width: 680px !important;
-      display: block !important;
-      margin: 0 auto !important;
-      line-height: 1.6 !important;
-      font-weight: normal !important;
+      line-height: 1.65 !important;
+      font-weight: 400 !important;
       letter-spacing: -0.2px !important;
+      text-align: center !important;
+      margin: 0 auto 40px auto !important;
     }
     
-    /* Overhaul the original huge Login Github link button */
-    .ui.inverted.vertical.masthead.center.aligned.segment a.ui.huge.primary.button {
-      background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important;
-      color: #ffffff !important;
-      padding: 16px 36px !important;
-      box-shadow: 0 8px 24px rgba(94, 106, 210, 0.3) !important;
-      border-radius: var(--rounded-md) !important;
+    /* Overhaul primary/basic CTA button systems without underlines */
+    .ui.inverted.vertical.masthead.center.aligned.segment a.ui.huge.primary.button,
+    a.ui.huge.primary.button,
+    .ui.inverted.vertical.masthead.center.aligned.segment a.ui.huge.basic.button,
+    a.ui.huge.basic.button {
+      text-decoration: none !important;
       font-family: 'Inter', sans-serif !important;
-      font-size: 1.15rem !important;
+      font-size: 1.1rem !important;
       font-weight: 600 !important;
+      border-radius: var(--rounded-md) !important;
       transition: all 0.25s ease !important;
-      border: none !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
-      min-height: 50px !important;
+      padding: 16px 36px !important;
+      min-height: 52px !important;
+      box-sizing: border-box !important;
     }
-    .ui.inverted.vertical.masthead.center.aligned.segment a.ui.huge.primary.button i.icon {
-      display: none !important; /* Hide hollow icon placeholders */
+    
+    .ui.inverted.vertical.masthead.center.aligned.segment a.ui.huge.primary.button {
+      background: linear-gradient(135deg, #5e6ad2 0%, #828fff 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 24px rgba(94, 106, 210, 0.3) !important;
+      border: none !important;
     }
     .ui.inverted.vertical.masthead.center.aligned.segment a.ui.huge.primary.button:hover {
       background: var(--color-primary-hover) !important;
@@ -432,14 +439,22 @@
       transform: translateY(-1px) !important;
     }
     
-    /* Dynamically inject 3 high-end features cards after the login button using CSS */
+    .ui.inverted.vertical.masthead.center.aligned.segment a.ui.huge.basic.button {
+      background: rgba(255, 255, 255, 0.03) !important;
+      border: 1px solid var(--color-hairline) !important;
+      color: var(--color-ink-muted) !important;
+      margin-left: 16px !important;
+    }
+    .ui.inverted.vertical.masthead.center.aligned.segment a.ui.huge.basic.button:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-color: var(--color-ink-subtle) !important;
+      color: #ffffff !important;
+      transform: translateY(-1px) !important;
+    }
+    
+    /* Dynamically inject 3 high-end features cards layout specs */
     .ui.inverted.vertical.masthead.center.aligned.segment .ui.text.container::after {
-      content: "" !important;
-      display: grid !important;
-      grid-template-columns: repeat(3, 1fr) !important;
-      gap: 20px !important;
-      margin-top: 80px !important;
-      text-align: left !important;
+      display: none !important;
     }
     
     /* Hide old-fashioned stripe quotes and marketing blocks in React */
@@ -480,6 +495,53 @@
       if (!window.loginUser || !window.loginUser.id) {
         $('#saas-demo-banner').show();
         $('body').css('padding-top', '50px');
+
+        // Poll wait for React components to mount to avoid race conditions
+        var checkUnauthLayout = setInterval(function() {
+          var masthead = $('.ui.inverted.vertical.masthead');
+          if (masthead.length > 0) {
+            clearInterval(checkUnauthLayout);
+            
+            // 1. Overwrite raw title with neon-glow text
+            var h1 = masthead.find('h1.ui.inverted.header');
+            h1.html('🚀 GitAutoDeploy <span style="font-size: 0.45em; color: var(--color-ink-subtle); display: block; margin-top: 10px; font-weight: 500; letter-spacing: 0;">AI-Powered Self-Healing Continuous Deployment SaaS</span>');
+            
+            // 2. Overwrite raw subtitle emphasizing core keywords
+            var h2 = masthead.find('h2');
+            h2.html('Turn <strong style="color: #ffffff; font-weight: 700;">Git Push</strong> into <span style="color: #828fff; font-weight: 600;">zero-config</span> live deployments. Let <span style="background: linear-gradient(135deg, #00f5ff 0%, #00e5ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;">Gemini 3.5 AI</span> autonomously heal your build errors <span style="color: #ff9f00; font-weight: 600;">under 10 seconds</span>.');
+
+            // 3. Inject secondary demo path to form dual-channel CTA conversion
+            var btnContainer = masthead.find('a.ui.huge.primary.button').parent();
+            if (btnContainer.length > 0) {
+              btnContainer.html(
+                '<a href="/login" class="ui huge primary button" style="text-decoration: none !important;"><i class="github icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sign in with GitHub</a>' +
+                '<a href="/login_demo" class="ui huge basic button" style="margin-left: 16px !important; text-decoration: none !important;"><i class="play icon" style="display:inline-block !important; margin-right: 8px !important;"></i> Sandbox Demo</a>'
+              );
+            }
+
+            // 4. Inject 3 frosted features cards to solve empty flat space issues
+            var featuresHtml = 
+              '<div class="hero-grid" style="margin-top: 60px !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; text-align: left !important; width: 100% !important;">' +
+              '  <div class="hero-card">' +
+              '    <h3>⚡ One-Click GitOps</h3>' +
+              '    <p>自动识别 Node, Python, Docker 项目。一键绑定 GitHub 代码仓，全自动向云端执行热部署。</p>' +
+              '  </div>' +
+              '  <div class="hero-card">' +
+              '    <h3>🤖 AI Self-Healing</h3>' +
+              '    <p>全天候监听运行状态。编译或运行崩溃时，驱动 Gemini 3.5 AI 自动分析 Traceback 并瞬间修愈。</p>' +
+              '  </div>' +
+              '  <div class="hero-card">' +
+              '    <h3>🔒 Private AI Shield</h3>' +
+              '    <p>企业级高强数据隐私保护。高级会员可绑定私有 AI 端点，确保您的核心代码日志绝不泄露。</p>' +
+              '  </div>' +
+              '</div>';
+
+            var textContainer = masthead.find('.ui.text.container');
+            if (textContainer.find('.hero-grid').length === 0) {
+              textContainer.append(featuresHtml);
+            }
+          }
+        }, 30);
       }
 
       if (window.loginUser && window.loginUser.id) {
