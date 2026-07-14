@@ -23,6 +23,7 @@ if __name__ == '__main__':
     if cmd == 'createdb':
         # Drop first option if passed
         drop_first = '--drop' in args or 'drop_first' in args
+        from app.database.model import User, WebHook, History, Collaborator, Server # noqa
         with app.app_context():
             if drop_first:
                 db.drop_all()
