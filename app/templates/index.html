@@ -550,6 +550,26 @@
   <script type="text/javascript" left="90%" bottom="20%" src="/static/res/js/x-return-top.min.js"></script>
   
   <script type="text/javascript">
+    // Visual error reporter for E2E headless diagnostics
+    window.onerror = function(message, source, lineno, colno, error) {
+      var div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.top = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.background = 'red';
+      div.style.color = 'white';
+      div.style.zIndex = '99999';
+      div.style.padding = '10px';
+      div.style.fontSize = '12px';
+      div.style.fontFamily = 'monospace';
+      div.textContent = 'JS ERROR: ' + message + ' at ' + source + ':' + lineno + ':' + colno;
+      document.body.appendChild(div);
+      return false;
+    };
+  </script>
+  
+  <script type="text/javascript">
     // Global Translation Packages
     var i18n = {
       en: {
