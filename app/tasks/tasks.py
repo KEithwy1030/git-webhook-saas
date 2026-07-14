@@ -55,7 +55,26 @@ def do_webhook_shell(webhook_id, history_id, data, user_id=None):
 
     # AI Root Cause Analysis for failures
     if not success:
-        ai_res = analyze_error_log(log)
+        from app.utils.RateLimitUtil import check_and_incr_ai_rate_limit
+        from app.database.model import User
+        from app import app
+        
+        owner = User.query.get(webhook.user_id)
+        is_premium = owner.is_premium if owner else False
+        
+        allowed = False
+        if is_premium:
+            allowed, _msg = check_and_incr_ai_rate_limit(webhook.user_id)
+            
+        if is_premium and allowed:
+            ai_res = analyze_error_log(log)
+        else:
+            # Fallback to local regex rule-based engine (zero-cost) by temporarily masking API Key
+            old_key = app.config.get('GEMINI_API_KEY')
+            app.config['GEMINI_API_KEY'] = ''
+            ai_res = analyze_error_log(log)
+            app.config['GEMINI_API_KEY'] = old_key
+            
         history.ai_analysis = ai_res['analysis']
         history.ai_fix_suggestion = ai_res['fix_suggestion']
     else:

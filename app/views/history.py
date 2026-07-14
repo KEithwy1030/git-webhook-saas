@@ -7,7 +7,7 @@ Created on 2016-10-20
 from app.wraps.login_wrap import login_required
 from app import app
 from app.utils import ResponseUtil, RequestUtil, AuthUtil
-from app.database.model import History
+from app.database.model import History, User
 
 
 # get history list
@@ -55,6 +55,9 @@ from app.tasks import tasks
 @login_required()
 def api_history_autofix():
     user_id = RequestUtil.get_login_user().get('id', '')
+    user = User.query.get(user_id)
+    if not user or not user.is_premium:
+        return ResponseUtil.standard_response(0, 'AI Auto-Fix is only available for Premium subscribers.')
     history_id = RequestUtil.get_parameter('history_id', '')
     
     history = History.query.get(history_id)
