@@ -9,9 +9,13 @@ def call_gemini_api(log_text):
     if not api_key:
         return None
 
-    # Use a verified model from Google's list API response
-    model_name = "gemini-2.5-flash-native-audio-latest"
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    # Gemini 3.5 Flash is the latest agentic & coding flagship model.
+    # Fallback to proven models sequentially to guarantee high availability.
+    models_to_try = [
+        "gemini-3.5-flash", 
+        "gemini-1.5-flash", 
+        "gemini-2.5-flash-native-audio-latest"
+    ]
     
     prompt = (
         "You are a DevOps expert assistant. Analyze the following stderr execution logs and output two JSON keys:\n"
@@ -33,30 +37,32 @@ def call_gemini_api(log_text):
         }]
     }
     
-    try:
-        # Request Google's Gemini API server directly
-        res = requests.post(url, headers=headers, json=payload, timeout=12)
-        if res.status_code == 200:
-            res_data = res.json()
-            output_text = res_data['candidates'][0]['content']['parts'][0]['text']
-            
-            output_text = output_text.strip()
-            # Clean up markdown wrapping if Gemini wraps the response
-            if output_text.startswith("```json"):
-                output_text = output_text[7:]
-            elif output_text.startswith("```"):
-                output_text = output_text[3:]
-            if output_text.endswith("```"):
-                output_text = output_text[:-3]
-            output_text = output_text.strip()
-            
-            parsed = json.loads(output_text)
-            return {
-                'analysis': parsed.get('analysis', ''),
-                'fix_suggestion': parsed.get('fix_suggestion', '')
-            }
-    except Exception as e:
-        print("[AI Diagnostic] Gemini request error, fallback to local regex:", e)
+    for model_name in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        try:
+            res = requests.post(url, headers=headers, json=payload, timeout=10)
+            if res.status_code == 200:
+                res_data = res.json()
+                output_text = res_data['candidates'][0]['content']['parts'][0]['text']
+                
+                output_text = output_text.strip()
+                if output_text.startswith("```json"):
+                    output_text = output_text[7:]
+                elif output_text.startswith("```"):
+                    output_text = output_text[3:]
+                if output_text.endswith("```"):
+                    output_text = output_text[:-3]
+                output_text = output_text.strip()
+                
+                parsed = json.loads(output_text)
+                print(f"[AI Diagnostic] Successfully used model: {model_name}")
+                return {
+                    'analysis': parsed.get('analysis', ''),
+                    'fix_suggestion': parsed.get('fix_suggestion', '')
+                }
+        except Exception as e:
+            print(f"[AI Diagnostic] Tried {model_name} failed: {e}")
+            continue
     return None
 
 
