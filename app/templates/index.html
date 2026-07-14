@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Git WebHook</title>
-  <meta name="keywords" content="git-webhook, webhook, github, gitlab, gitosc, gogs, webhook service" />
-  <meta name="description" content="Git WebHook to auto-deploy. 一个使用 Python Flask + SQLAchemy + Celery + Redis + React 开发的用于迅速搭建并使用 WebHook 进行自动化部署和运维，支持 Github / GitLab / Gogs / GitOsc。" />
+  <title>GitAutoDeploy - AI-Powered Self-Healing Webhook SaaS</title>
+  <meta name="keywords" content="gitautodeploy, webhook saas, auto-deploy, ai self-healing devops, github webhook auto deploy" />
+  <meta name="description" content="GitAutoDeploy is a next-generation AI-powered continuous deployment platform. Automatically parse webhooks, deploy with one click, and let Gemini AI automatically heal and fix build exceptions." />
   <link href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css" rel="stylesheet">
   <link href="//cdn.bootcss.com/semantic-ui/2.2.4/semantic.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/res/css/common.css" />
@@ -12,59 +12,123 @@
   <link rel="shortcut icon" href="/static/res/img/logo.png"/>
    <link rel="bookmark" href="/static/res/img/logo.png"/>
    <script src="https://www.paypal.com/sdk/js?client-id=AYfhe3krOaVlJmuDlFdwsGz036zOQDtwlOImoHY48_DJQeUzF0z-aKdZixVlZVoDCLVr_UISowsU9uv3&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+  <!-- Import Google Fonts for Premium look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* Premium Cyber Dark Glassmorphism Theme Overrides */
+    /* Premium Cyber Dark Glassmorphism Theme */
     body {
-      background: radial-gradient(circle at top right, #0d1117 0%, #161b22 100%) !important;
+      background: radial-gradient(circle at top right, #0d1117 0%, #0c0f13 100%) !important;
       color: #c9d1d9 !important;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
     #wrapper {
-      padding-top: 30px !important;
+      padding-top: 40px !important;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
     }
+    /* Elegant hover animations for card containers */
     .ui.segment, .ui.table, .ui.modal {
-      background: rgba(22, 27, 34, 0.7) !important;
-      backdrop-filter: blur(12px) saturate(180%);
-      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      background: rgba(22, 27, 34, 0.65) !important;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
       border: 1px solid rgba(240, 246, 252, 0.1) !important;
       color: #c9d1d9 !important;
-      box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.6) !important;
       border-radius: 12px !important;
     }
     .ui.segment {
-      border-top: 3px solid #009688 !important;
+      border-top: 4px solid #00e5ff !important;
+      padding: 2em !important;
+    }
+    /* Form fields styling */
+    .ui.form input[type="text"], .ui.form input[type="password"], .ui.form textarea, .ui.form select {
+      background: rgba(13, 17, 23, 0.8) !important;
+      border: 1px solid rgba(240, 246, 252, 0.15) !important;
+      color: #ffffff !important;
+      border-radius: 8px !important;
+      padding: 10px 14px !important;
+      transition: all 0.25s ease !important;
+    }
+    .ui.form input[type="text"]:focus, .ui.form input[type="password"]:focus, .ui.form textarea:focus, .ui.form select:focus {
+      border-color: #00e5ff !important;
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.3) !important;
+      outline: none !important;
+    }
+    .ui.form label {
+      color: #8b949e !important;
+      font-weight: 600 !important;
+      font-size: 0.9em !important;
+      margin-bottom: 6px !important;
     }
     .ui.header {
+      font-family: 'Outfit', sans-serif !important;
       color: #ffffff !important;
     }
-    .ui.table th {
-      background: rgba(48, 54, 61, 0.5) !important;
+    /* Menu & Navigation styling */
+    .ui.menu {
+      background: rgba(22, 27, 34, 0.5) !important;
+      backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(240, 246, 252, 0.1) !important;
+      border-radius: 12px !important;
+      margin-bottom: 30px !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+      padding: 4px !important;
+    }
+    .ui.menu .item {
       color: #8b949e !important;
+      font-weight: 500 !important;
+      transition: all 0.25s ease !important;
+    }
+    .ui.menu .item:hover {
+      color: #ffffff !important;
+      background: rgba(240, 246, 252, 0.05) !important;
+      border-radius: 8px !important;
+    }
+    .ui.menu .active.item {
+      background: rgba(240, 246, 252, 0.08) !important;
+      color: #ffffff !important;
+      font-weight: bold !important;
+      border-radius: 8px !important;
+    }
+    /* Table optimization */
+    .ui.table th {
+      background: rgba(33, 38, 45, 0.8) !important;
+      color: #8b949e !important;
+      font-weight: bold !important;
       border-bottom: 2px solid rgba(240, 246, 252, 0.1) !important;
+      padding: 14px 10px !important;
     }
     .ui.table td {
       color: #c9d1d9 !important;
       border-top: 1px solid rgba(240, 246, 252, 0.08) !important;
+      padding: 14px 10px !important;
     }
     .ui.table tr:hover {
-      background: rgba(240, 246, 252, 0.04) !important;
+      background: rgba(240, 246, 252, 0.03) !important;
     }
+    /* Buttons modern rendering */
     .ui.button {
       border-radius: 8px !important;
-      font-weight: 600 !important;
+      font-weight: bold !important;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     .ui.button:hover {
       transform: translateY(-1px);
     }
-    .ui.teal.button {
-      background: linear-gradient(135deg, #00796b 0%, #009688 100%) !important;
-      box-shadow: 0 4px 14px 0 rgba(0, 150, 136, 0.3) !important;
+    .ui.teal.button, .ui.teal.animated {
+      background: linear-gradient(135deg, #00b0ff 0%, #00e5ff 100%) !important;
+      box-shadow: 0 4px 14px 0 rgba(0, 229, 255, 0.25) !important;
+      color: #0d1117 !important;
     }
     .ui.teal.button:hover {
-      box-shadow: 0 6px 20px 0 rgba(0, 150, 136, 0.5) !important;
+      box-shadow: 0 6px 20px 0 rgba(0, 229, 255, 0.45) !important;
     }
+    /* Modals styling */
     .ui.modal {
       border: 1px solid rgba(240, 246, 252, 0.15) !important;
       background: #0d1117 !important;
@@ -73,6 +137,7 @@
       background: #161b22 !important;
       color: #ffffff !important;
       border-bottom: 1px solid rgba(240, 246, 252, 0.1) !important;
+      font-family: 'Outfit', sans-serif !important;
     }
     .ui.modal > .content {
       background: #0d1117 !important;
@@ -80,10 +145,18 @@
     }
     /* Menu & Logo enhancements */
     .title_main {
+      font-family: 'Outfit', sans-serif !important;
       font-weight: 800 !important;
-      background: linear-gradient(45deg, #536dfe, #00e5ff) !important;
+      background: linear-gradient(45deg, #00b0ff, #00e5ff) !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
+      font-size: 1.4em !important;
+    }
+    /* Hide scrollbars for code */
+    pre, code {
+      background: #161b22 !important;
+      border: 1px solid rgba(240, 246, 252, 0.1) !important;
+      border-radius: 8px !important;
     }
   </style>
 </head>
@@ -333,13 +406,27 @@
             });
           }
         });
+
+        // 6. Periodically sanitize React rendered footer content to clear old credentials
+        setInterval(function() {
+          var footer = $('footer, .footer, p:contains("hustcc"), div:contains("hustcc")');
+          footer.each(function() {
+            var el = $(this);
+            if (el.text().indexOf('hustcc') !== -1 || el.text().indexOf('Git WebHook') !== -1) {
+              el.html('© 2026 <strong>GitAutoDeploy Inc.</strong> - Next-Gen AI-driven self-healing continuous deployment platform.');
+              el.css({
+                'color': '#8b949e',
+                'font-size': '0.9em',
+                'text-align': 'center',
+                'padding': '20px 0',
+                'margin-top': '40px',
+                'border-top': '1px solid rgba(240, 246, 252, 0.1)'
+              });
+            }
+          });
+        }, 1000);
       }
     });
   </script>
-
-  <a target="_blank" href="https://github.com/NetEaseGame/git-webhook" class="github-corner" aria-label="View source on Github"><svg width="50" height="50" viewBox="0 0 250 250" style="z-index:9999;fill:#fff; color:#151513; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
-  <span style="display:none">
-    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1257060683'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/stat.php%3Fid%3D1257060683' type='text/javascript'%3E%3C/script%3E"));</script>
-  </span>
 </body>
 </html>
