@@ -680,7 +680,7 @@
 
     function translateReactConsole(dict) {
       // 1. Footer Credits Translation (with direct selector matching to prevent loop duplication)
-      var footer = $('footer, .footer, p:contains("hustcc"), div:contains("hustcc"), p:contains("版权所有"), div:contains("版权所有"), p:contains("GitAutoDeploy"), div:contains("GitAutoDeploy")');
+      var footer = $('footer, .footer, p:contains("hustcc"), div:contains("hustcc"), p:contains("版权所有"), div:contains("版权所有"), p:contains("All Rights Reserved"), div:contains("All Rights Reserved")');
       footer.each(function() {
         var el = $(this);
         // Only modify text node if it does not equal the target to prevent loops
