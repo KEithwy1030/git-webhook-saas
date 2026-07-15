@@ -679,24 +679,23 @@
     }
 
     function translateReactConsole(dict) {
-      // 1. Footer Credits Translation (with direct selector matching to prevent loop duplication)
-      var footer = $('footer, .footer, p:contains("hustcc"), div:contains("hustcc"), p:contains("版权所有"), div:contains("版权所有"), p:contains("All Rights Reserved"), div:contains("All Rights Reserved")');
-      footer.each(function() {
-        var el = $(this);
-        // Only modify text node if it does not equal the target to prevent loops
-        if (el.text().trim() !== dict.footer && el.children().length === 0) {
-          el.text(dict.footer);
-          el.css({
-            'color': '#8b949e',
-            'font-size': '0.85em',
-            'text-align': 'center',
-            'padding': '30px 0',
-            'margin-top': '50px',
-            'border-top': '1px solid rgba(240, 246, 252, 0.1)',
-            'font-family': "'Inter', sans-serif"
-          });
-        }
-      });
+      // 1. Footer Credits Translation (targeted directly via Semantic UI footer segment classes)
+      var footerSegment = $('.ui.footer.segment, footer, .footer');
+      if (footerSegment.length > 0) {
+        var footerContent = footerSegment.find('.link.list, .container, span');
+        footerContent.each(function() {
+          var el = $(this);
+          // Only rewrite if it's the specific target element containing old footer texts
+          if (el.text().trim() !== dict.footer && (el.text().indexOf('版权所有') > -1 || el.text().indexOf('Hustcc') > -1 || el.text().indexOf('All Rights Reserved') > -1)) {
+            el.html('<span style="color: #8b949e; font-size: 0.9em; font-family: \'Inter\', sans-serif;">' + dict.footer + '</span>');
+            footerSegment.css({
+              'padding': '30px 0',
+              'margin-top': '50px',
+              'border-top': '1px solid rgba(240, 246, 252, 0.1)'
+            });
+          }
+        });
+      }
 
       // 2. Navigation items
       $('.ui.menu a.item, .ui.menu .item').each(function() {
