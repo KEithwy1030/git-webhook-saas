@@ -17,7 +17,7 @@ const WebHook = React.createClass({
       showAddForm: false, 
       webhooks: [],
       servers: [],
-      btnText: '添加新的 Git WebHook',
+      btnText: window.currentLang === 'zh' ? '添加新的 Git WebHook' : 'Add New Webhook',
       editWebHook: {}
     };
   },
@@ -71,7 +71,7 @@ const WebHook = React.createClass({
           if (updateOrAdd) webhooks[this.currentEditIndex] = r.data;
           // add webhook，数组顶端
           else webhooks.unshift(r.data);
-          this.setState({webhooks: webhooks, editWebHook: {},showAddForm: false, btnText: '添加新的 Git WebHook'});
+          this.setState({webhooks: webhooks, editWebHook: {},showAddForm: false, btnText: window.currentLang === 'zh' ? '添加新的 Git WebHook' : 'Add New Webhook'});
         }
         else this.showError(r.data);
       }.bind(this));
@@ -82,7 +82,7 @@ const WebHook = React.createClass({
   },
   clickCloseBtn: function() {
     this.refs.addForm.reset();
-    this.setState({showAddForm: false, editWebHook:{}, btnText: '添加新的 Git WebHook'});
+    this.setState({showAddForm: false, editWebHook:{}, btnText: window.currentLang === 'zh' ? '添加新的 Git WebHook' : 'Add New Webhook'});
   },
   editWebHook: function(webhook, index) {
     if (this.refs.addForm) {
@@ -148,7 +148,7 @@ const WebHook = React.createClass({
                   </td>
                   <td><pre className="language-powershell" dangerouslySetInnerHTML={{__html: webhook.shell}} /></td>
                   <td>{webhook.server.name}</td>
-                  <td title={webhook.lastUpdate}><TimeAgo locale='zh_CN' datetime={webhook.lastUpdate} /></td>
+                  <td title={webhook.lastUpdate}><TimeAgo locale={window.currentLang === 'zh' ? 'zh_CN' : 'en_US'} datetime={webhook.lastUpdate} /></td>
                   <td className="hover">
                     <span className="hover_hidden">{StringUtils.statusToTag(webhook.status)}</span>
                     <span className="hover_show ui icon tiny button" onClick={this.retryBtnClick.bind(this, webhook.id, i)}>
@@ -206,8 +206,8 @@ const WebHook = React.createClass({
             </div>
             { this.state.showAddForm &&
               <div className="ui red animated fade button mini" onClick={this.clickCloseBtn}>
-                <div className="visible content">关闭表单</div>
-                <div className="hidden content">关闭表单</div>
+                <div className="visible content">{window.currentLang === 'zh' ? '关闭表单' : 'Close Form'}</div>
+                <div className="hidden content">{window.currentLang === 'zh' ? '关闭表单' : 'Close Form'}</div>
               </div>
             }
           </div>

@@ -679,13 +679,22 @@
     }
 
     function translateReactConsole(dict) {
-      // 1. Footer Credits Translation
-      $('body, #wrapper').find('*').each(function() {
-        var text = $(this).text().trim();
-        if ($(this).children().length === 0) { // Leaf text node only
-          if (text.indexOf('版权所有') > -1 || text.indexOf('Hustcc') > -1 || text.indexOf('© 2016') > -1) {
-            $(this).text(dict.footer);
-          }
+      // 1. Footer Credits Translation (with direct selector matching to prevent loop duplication)
+      var footer = $('footer, .footer, p:contains("hustcc"), div:contains("hustcc"), p:contains("版权所有"), div:contains("版权所有"), p:contains("GitAutoDeploy"), div:contains("GitAutoDeploy")');
+      footer.each(function() {
+        var el = $(this);
+        // Only modify text node if it does not equal the target to prevent loops
+        if (el.text().trim() !== dict.footer && el.children().length === 0) {
+          el.text(dict.footer);
+          el.css({
+            'color': '#8b949e',
+            'font-size': '0.85em',
+            'text-align': 'center',
+            'padding': '30px 0',
+            'margin-top': '50px',
+            'border-top': '1px solid rgba(240, 246, 252, 0.1)',
+            'font-family': "'Inter', sans-serif"
+          });
         }
       });
 
@@ -992,24 +1001,6 @@
           }
         });
 
-        // 6. Periodically sanitize React rendered footer content to clear old credentials
-        setInterval(function() {
-          var footer = $('footer, .footer, p:contains("hustcc"), div:contains("hustcc")');
-          footer.each(function() {
-            var el = $(this);
-            if (el.text().indexOf('hustcc') !== -1 || el.text().indexOf('Git WebHook') !== -1) {
-              el.html('© 2026 <strong>GitAutoDeploy Inc.</strong> - Next-Gen AI-driven self-healing continuous deployment platform.');
-              el.css({
-                'color': '#8b949e',
-                'font-size': '0.9em',
-                'text-align': 'center',
-                'padding': '20px 0',
-                'margin-top': '40px',
-                'border-top': '1px solid rgba(240, 246, 252, 0.1)'
-              });
-            }
-          });
-        }, 1000);
       }
     });
   </script>

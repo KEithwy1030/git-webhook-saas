@@ -15,7 +15,7 @@ const Server = React.createClass({
     return {
       showAddForm: false, 
       servers: [],
-      btnText: '添加新的 Server',
+      btnText: window.currentLang === 'zh' ? '添加新的 Server' : 'Add New Server',
       editServer: {}
     };
   },
@@ -47,7 +47,7 @@ const Server = React.createClass({
           if (updateOrAdd) servers[this.currentEditIndex] = r.data;
           // add server
           else servers.unshift(r.data);
-          this.setState({servers: servers, editServer: {}, showAddForm: false, btnText: '添加新的 Server'});
+          this.setState({servers: servers, editServer: {}, showAddForm: false, btnText: window.currentLang === 'zh' ? '添加新的 Server' : 'Add New Server'});
         }
         else this.showError(r.data);
       }.bind(this));
@@ -58,7 +58,7 @@ const Server = React.createClass({
   },
   clickCloseBtn: function() {
     this.refs.addForm.reset();
-    this.setState({showAddForm: false, editServer:{}, btnText: '添加新的 Server'});
+    this.setState({showAddForm: false, editServer:{}, btnText: window.currentLang === 'zh' ? '添加新的 Server' : 'Add New Server'});
   },
   editServer: function(server, index) {
     if (this.refs.addForm) {
@@ -113,7 +113,7 @@ const Server = React.createClass({
                   <td>{server.port}</td>
                   <td>{server.account}</td>
                   <td>****</td>
-                  <td title={server.add_time}><TimeAgo locale='zh_CN' datetime={server.add_time} /></td>
+                  <td title={server.add_time}><TimeAgo locale={window.currentLang === 'zh' ? 'zh_CN' : 'en_US'} datetime={server.add_time} /></td>
                   <td>
                     <button className="mini ui icon button" onClick={this.editServer.bind(this, server, i)}><i className="ui icon edit"></i></button>
                     <button className="mini ui icon button" onClick={this.deleteServer.bind(this, server.id, i)}><i className="ui icon delete"></i></button>
@@ -161,8 +161,8 @@ const Server = React.createClass({
             </div>
             { this.state.showAddForm &&
               <div className="ui red animated fade button mini" onClick={this.clickCloseBtn}>
-                <div className="visible content">关闭表单</div>
-                <div className="hidden content">关闭表单</div>
+                <div className="visible content">{window.currentLang === 'zh' ? '关闭表单' : 'Close Form'}</div>
+                <div className="hidden content">{window.currentLang === 'zh' ? '关闭表单' : 'Close Form'}</div>
               </div>
             }
           </div>
