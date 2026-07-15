@@ -707,18 +707,55 @@
         if (text === 'Documents' || text === 'Documentation' || text === '文档中心') $(this).text(dict.navDocs);
       });
 
-      // 3. CTA Buttons
-      $('.ui.button').each(function() {
+      // 3. CTA Buttons & Subcontents (supports Semantic UI animated fade effects)
+      $('.ui.button, .ui.button .content, .visible.content, .hidden.content').each(function() {
         var text = $(this).text().trim();
         if (text === '添加新的 Git WebHook' || text === 'Add New Webhook') {
-          $(this).html('<i class="plus icon"></i> ' + dict.addWebhook);
+          $(this).text(dict.addWebhook);
         }
         if (text === '添加新的 Server' || text === 'Add New Server') {
-          $(this).html('<i class="plus icon"></i> ' + dict.addServer);
+          $(this).text(dict.addServer);
+        }
+        if (text === '关闭表单' || text === 'Close Form') {
+          $(this).text(currentLang === 'zh' ? '关闭表单' : 'Close Form');
         }
       });
 
-      // 4. Documentation subjects
+      // 4. Table Headers Localization
+      $('th').each(function() {
+        var text = $(this).text().trim();
+        if (text === 'Repo' || text === '项目仓') $(this).text(currentLang === 'zh' ? '项目仓' : 'Repo');
+        if (text === 'Shell' || text === '部署脚本') $(this).text(currentLang === 'zh' ? '部署脚本' : 'Shell');
+        if (text === 'Server' || text === '目标服务器') $(this).text(currentLang === 'zh' ? '目标服务器' : 'Server');
+        if (text === 'LastHook' || text === '上次触发') $(this).text(currentLang === 'zh' ? '上次触发' : 'LastHook');
+        if (text === 'Status' || text === '状态') $(this).text(currentLang === 'zh' ? '状态' : 'Status');
+        if (text === 'Operate' || text === '操作') $(this).text(currentLang === 'zh' ? '操作' : 'Operate');
+      });
+
+      // 5. TimeAgo labels localization
+      $('td').each(function() {
+        var text = $(this).text().trim();
+        if (text.indexOf('几秒前') > -1 || text.indexOf('seconds ago') > -1) {
+          $(this).text(currentLang === 'zh' ? '几秒前' : 'seconds ago');
+        }
+        if (text.indexOf('1分钟前') > -1 || text.indexOf('1 minute ago') > -1) {
+          $(this).text(currentLang === 'zh' ? '1分钟前' : '1 minute ago');
+        }
+        if (text.indexOf('分钟前') > -1) {
+          var num = parseInt(text);
+          $(this).text(currentLang === 'zh' ? num + '分钟前' : num + ' minutes ago');
+        }
+        if (text.indexOf('小时前') > -1) {
+          var num = parseInt(text);
+          $(this).text(currentLang === 'zh' ? num + '小时前' : num + ' hours ago');
+        }
+        if (text.indexOf('天前') > -1) {
+          var num = parseInt(text);
+          $(this).text(currentLang === 'zh' ? num + '天前' : num + ' days ago');
+        }
+      });
+
+      // 6. Documentation subjects
       $('a.item, a, .item').each(function() {
         var text = $(this).text().trim();
         if (text.indexOf('Git-WebHook 的原理与使用') > -1 || text.indexOf('How GitAutoDeploy Works') > -1) {
